@@ -10,9 +10,9 @@
 
 ### 1.1 Purpose
 
-* Define requirements for a distribution chain and inventory management system
-* Streamline procurement, inventory tracking, sales, and reporting
-* Provide visibility into stock, costs, pricing, and customer transactions
+* Define requirements for a distribution chain, inventory, and accounting system
+* Streamline procurement, inventory tracking, sales, accounting, and reporting
+* Provide full visibility into stock, costs, pricing, customer transactions, and financials
 
 ### 1.2 Scope
 
@@ -24,8 +24,10 @@
   * Customer management
   * Order processing
   * Pricing management
+  * Accounting and invoicing
   * Reporting and analytics
 * Multi-user system with role-based access (admin and staff)
+* Accounting is **fully integrated with customer management and order lifecycle**
 
 ---
 
@@ -34,16 +36,22 @@
 ### 2.1 Admin
 
 * Full system access
-* Manage products, suppliers, customers, pricing
-* View analytics and reports
-* Overall monitoring privilege
+* Manage:
 
-### 2.2 Staff (Proper name to be decided)
+  * Products
+  * Suppliers
+  * Customers
+  * Pricing
+  * Accounting
+* View reports and analytics
+* Monitor financial health and operations
 
-* Place orders on behalf of customers
-* Update order status
+### 2.2 Staff (Field Agents)
+
+* Create orders on behalf of customers
+* Update delivery status
 * View assigned customers and pricing
-* Limited access to inventory and product data
+* Limited access to financial/accounting data (view-only where applicable)
 
 ---
 
@@ -88,7 +96,7 @@
 
   * Supplier-wise cost
   * Purchase batches
-* Maintain product-level metadata:
+* Maintain:
 
   * Cost history
   * Supplier mapping
@@ -105,20 +113,19 @@
   * Available stock
 * Maintain inventory per batch:
 
-  * Purchase batch tracking
+  * Batch ID
+  * Supplier reference
   * Cost per batch
 * Support:
 
   * Stock in (procurement)
   * Stock out (sales/delivery)
-* Alerts:
-
-  * Low stock alerts
-* Stock movement logs:
+* Maintain stock movement logs:
 
   * Date/time
-  * Source (supplier/customer)
-  * Quantity change
+  * Source/destination
+  * Quantity
+* Low stock alerts
 
 ---
 
@@ -132,16 +139,15 @@
   * Phone/email
   * Location/address
   * Client type/category
-* Customer account view:
+* Integrated with accounting:
 
-  * Order history
-  * Payment history
+  * Ledger view
   * Outstanding balance
-  * Advance payments
+  * Advance balance
 * Track:
 
-  * Credit limit (optional)
-  * Payment behavior
+  * Credit behavior
+  * Payment history
 
 ---
 
@@ -151,9 +157,7 @@
 
   * Product
   * Agreed price
-* Support:
-
-  * Different prices for different customers
+* Support different prices per customer
 * Track price changes over time
 * Apply pricing automatically during order creation
 
@@ -163,13 +167,13 @@
 
 ### Order Creation
 
-* Staff can create orders on behalf of customers
+* Staff creates orders on behalf of customers
 * Select:
 
   * Customer
   * Products
   * Quantities
-* Auto-fetch customer-specific pricing
+* System auto-applies customer-specific pricing
 
 ### Order Lifecycle
 
@@ -180,11 +184,7 @@
   * Ready for delivery
   * Out for delivery
   * Delivered
-* Track timestamps for:
-
-  * Order creation
-  * Status changes
-  * Delivery completion
+* Track timestamps for each stage
 
 ### Delivery Management
 
@@ -192,75 +192,218 @@
 * Mark delivery status
 * Capture delivery confirmation
 
-### Financial Tracking
+### Financial Impact
 
-* Order value calculation
-* Payment type:
+* Order contributes to:
 
-  * Cash
-  * Credit
-  * Digital
-* Update customer balance
+  * Invoice generation
+  * Customer ledger
+  * Inventory deduction
 
 ---
 
-## 3.7 Payment Management
+## 3.7 Accounting System (Integrated with Customer Management)
 
-* Record payments from customers:
+### Overview
+
+* Centralized accounting system tightly integrated with:
+
+  * Customer management
+  * Order management
+  * Payment tracking
+* Maintains real-time financial position of each customer
+
+---
+
+### Core Principles
+
+* Every transaction is linked to:
+
+  * Customer
+  * Invoice or order
+* Maintain running balance per customer:
+
+  * Debit (customer owes business)
+  * Credit (customer advance/payment)
+* Accounting data is automatically generated from:
+
+  * Orders
+  * Invoices
+  * Payments
+
+---
+
+### Customer Ledger (Account View)
+
+* Each customer has a dedicated ledger
+* Chronological transaction history
+
+#### Ledger Entries Include:
+
+* Invoice generated
+* Order delivered
+* Payment received
+* Adjustments
+
+#### Fields per Entry:
+
+* Date
+* Transaction type (Invoice / Payment / Adjustment)
+* Reference ID (Order/Invoice)
+* Debit amount
+* Credit amount
+* Running balance
+
+---
+
+### Invoice Management
+
+#### Invoice Generation
+
+* Generate invoice:
+
+  * On delivery
+  * On demand (manual trigger)
+* Invoice includes:
+
+  * Customer details
+  * List of products:
+
+    * Quantity
+    * Price
+    * Total per item
+  * Total invoice value
+  * Date range (e.g., last invoice to current)
+  * Invoice date
+  * Due date
+
+#### Invoice Features
+
+* Unique invoice ID
+* Ability to:
+
+  * Send/share invoice (PDF or digital)
+* Filter invoices by:
+
+  * Date range
+  * Customer
+* Track:
+
+  * Paid invoices
+  * Unpaid invoices
+  * Partially paid invoices
+
+---
+
+### Receipt Management (Merged with Payment System)
+
+#### Receipt Generation
+
+* Generate receipt when payment is recorded
+* Receipt linked to:
+
+  * Customer
+  * Invoice(s)
+
+#### Receipt Includes:
+
+* Payment date
+* Amount received
+* Payment mode:
+
+  * Cash
+  * Bank transfer
+  * Digital
+* Linked invoices (if applicable)
+* Remaining balance
+
+---
+
+### Combined Statement (Invoice + Payment View)
+
+* Generate unified statement per customer
+* Shows:
+
+  * Invoices issued
+  * Payments received
+  * Outstanding balance
+
+#### Features
+
+* Filter by:
+
+  * Date range (e.g., last invoice to present)
+  * Custom date selection
+* Includes:
+
+  * Itemized order details
+  * Dates of transactions
+  * Running balance
+* Can act as:
+
+  * Payment request document
+  * Account summary
+
+---
+
+### Payment Tracking
+
+* Record payments:
 
   * Date
   * Amount
-  * Mode (cash, bank, digital)
+  * Mode
 * Link payments to:
 
-  * Orders (optional)
-  * Customer account
-* Track:
+  * Specific invoices (optional)
+  * Customer account (general)
+* Support:
 
-  * Outstanding balance
+  * Partial payments
   * Advance payments
-* Payment history logs
+* Automatically update:
+
+  * Customer ledger
+  * Outstanding balance
 
 ---
 
 ## 3.8 Reporting
 
-### Standard Reports
+### Time-Based Reports
 
-* Monthly reports
-* Quarterly reports
-* Annual reports
+* Monthly
+* Quarterly
+* Annual
 
 ### Inventory Reports
 
-* Current stock report
-* Stock movement report
-* Low stock report
+* Stock levels
+* Stock movement
+* Low stock alerts
 
 ### Sales Reports
 
 * Product-wise sales
 * Customer-wise sales
-* Revenue reports
 
 ### Financial Reports
 
-* Profit/loss estimation
-* Outstanding payments
-* Cash flow summaries
+* Outstanding balances
+* Payment collections
+* Revenue summary
 
 ---
 
 ## 3.9 Order Aging Reports
 
-* Track pending payments per customer
-* Categorize aging:
+* Track unpaid invoices per customer
+* Categorize:
 
   * 0–30 days
   * 31–60 days
   * 61–90 days
   * 90+ days
-* Customer-wise aging summary
 * Highlight overdue accounts
 
 ---
@@ -270,10 +413,10 @@
 ### Product Analytics
 
 * Sales volume per product
-* Profit margin per product:
+* Profit margin:
 
   * Selling price vs cost
-* Fast-moving vs slow-moving products
+* Fast vs slow moving products
 
 ### Customer Analytics
 
@@ -283,60 +426,7 @@
 
 ### Pricing Analytics
 
-* Impact of different pricing per customer
 * Margin comparison across customers
-
----
-
-## 4. Non-Functional Requirements
-
-### Performance
-
-* Handle concurrent users (admin + multiple staff)
-* Fast response for order creation and inventory updates
-
-### Scalability
-
-* Support increasing number of:
-
-  * Products
-  * Customers
-  * Orders
-
-### Security
-
-* Role-based access control
-* Secure authentication
-* Data protection
-
-### Usability
-
-* Simple UI for field staff
-* Dashboard for admin insights
-
-### Reliability
-
-* Data consistency across modules
-* Backup and recovery support
-
----
-
-## 5. System Architecture (High-Level)
-
-* Frontend:
-
-  * Web or mobile interface for admin and staff
-* Backend:
-
-  * REST API or similar service
-* Database:
-
-  * Relational database for structured data
-* Modules:
-
-  * Inventory Service
-  * Order Service
-  * Customer Service
-  * Reporting Service
+* Effect of custom pricing
 
 ---
